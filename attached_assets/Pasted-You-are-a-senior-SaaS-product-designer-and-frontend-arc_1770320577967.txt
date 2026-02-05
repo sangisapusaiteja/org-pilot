@@ -1,0 +1,190 @@
+You are a senior SaaS product designer and frontend architect.
+
+Design a modern, clean, enterprise-grade web application UI called **OrgPilot**.
+
+Tech Stack:
+- Next.js (App Router)
+- React
+- Tailwind CSS
+- shadcn/ui
+- Responsive (Desktop first, Mobile friendly)
+- Light & Dark mode support
+
+Design Style:
+- Minimal
+- Professional SaaS
+- Clean spacing
+- Soft shadows
+- Rounded corners
+- Neutral colors with a primary brand accent
+- Dashboard-focused layout
+
+------------------------------------
+GLOBAL LAYOUT
+------------------------------------
+- Fixed left sidebar
+- Top header with:
+  - App name (OrgPilot)
+  - User avatar dropdown (Profile, Logout)
+- Main content area with cards, tables, and forms
+- Breadcrumb support
+
+------------------------------------
+LOGIN PAGE DESIGN
+------------------------------------
+- Centered card layout
+- Fields:
+  - Email
+  - Password
+- Primary CTA: "Sign In"
+- Subtext: "Secure organization access"
+- Clean background with subtle gradient
+- No signup link (admin-controlled system)
+
+------------------------------------
+ROLE-BASED DASHBOARD (SAME ROUTE)
+------------------------------------
+Use ONE dashboard route but render UI based on role.
+
+------------------------------------
+GOD USER DASHBOARD
+------------------------------------
+Sidebar Menu:
+- Dashboard
+- Companies
+- Managers
+- Employees
+- Settings
+
+Dashboard Content:
+- Summary cards:
+  - Total Companies
+  - Total Managers
+  - Total Employees
+- Recent Companies table
+- Recent User Activity section
+
+------------------------------------
+COMPANIES MODULE (GOD USER)
+------------------------------------
+Companies Listing Page:
+- Table with:
+  - Company Name
+  - Industry
+  - Location
+  - Owner
+  - Status
+  - Actions (View / Edit / Disable)
+- Filters at top:
+  - Search by name
+  - Industry dropdown
+  - Status dropdown
+- "Add Company" primary button (top right)
+
+Add Company Form:
+- Two-column layout
+- Fields:
+  - Company Name
+  - Industry
+  - Email
+  - Phone
+  - Address
+  - Country / State / City
+  - Company Size
+  - Status toggle
+- Sticky footer with Save / Cancel buttons
+
+------------------------------------
+MANAGERS MODULE (GOD USER)
+------------------------------------
+Managers Listing:
+- Name
+- Email
+- Company
+- Status
+- Actions
+
+Add Manager Form:
+- First Name
+- Last Name
+- Email
+- Company dropdown
+- Password
+- Status toggle
+
+------------------------------------
+EMPLOYEES MODULE
+------------------------------------
+Employee Listing:
+- Name
+- Email
+- Team
+- Status
+- Attendance status badge
+
+Add Employee Form:
+- First Name
+- Last Name
+- Email
+- Team dropdown
+- Shift dropdown
+- Password
+
+------------------------------------
+MANAGER DASHBOARD
+------------------------------------
+Sidebar Menu:
+- Dashboard
+- Teams
+- Employees
+- Attendance
+- Leave Requests
+
+Dashboard Content:
+- Team-wise attendance cards
+- Employees present / absent today
+- Pending leave requests
+
+------------------------------------
+EMPLOYEE DASHBOARD
+------------------------------------
+Sidebar Menu:
+- Dashboard
+- Attendance
+- Leave
+- Profile
+
+Dashboard Content:
+- Large Clock In / Clock Out button
+- Live timer when clocked in
+- Today's attendance summary
+- Monthly attendance overview card
+
+------------------------------------
+ATTENDANCE UI (ZIMYO-LIKE)
+------------------------------------
+- Clock in / Clock out toggle button
+- Status indicator (Working / Checked Out)
+- Time log table
+- Manager view: Team-wise attendance table
+
+------------------------------------
+UX RULES
+------------------------------------
+- Use cards for grouping
+- Use tables for listings
+- Use badges for status
+- Use modals or side drawers for forms
+- Loading skeletons everywhere
+- Empty state illustrations
+
+------------------------------------
+DELIVERABLE
+------------------------------------
+- Component structure
+- Page layouts
+- Sidebar navigation
+- Tailwind class usage
+- shadcn/ui components
+- Dummy data placeholders
+- Clean, production-quality UI code

@@ -1,21 +1,22 @@
+
 import { ReactNode } from "react";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
 import { useAuth } from "@/hooks/use-auth";
-import { useLocation } from "wouter";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
-  const [, setLocation] = useLocation();
+  const { user, isReady } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    if (!user) {
-      setLocation("/");
+    if (isReady && !user) {
+      router.replace("/");
     }
-  }, [user, setLocation]);
+  }, [user, isReady, router]);
 
-  if (!user) return null;
+  if (!isReady || !user) return null;
 
   return (
     <div className="min-h-screen bg-muted/30 flex">

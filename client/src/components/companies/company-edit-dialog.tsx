@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 import { Building2, Briefcase } from "lucide-react";
+import { INDUSTRIES, LOCATIONS } from "@/pages/companies";
 
 type Company = {
   id: string;
@@ -135,11 +136,20 @@ export function CompanyEditDialog({
               </Field>
 
               <Field label="Industry">
-                <Input
-                  id="industry"
+                <select
                   value={form.industry ?? ""}
-                  onChange={handleChange}
-                />
+                  onChange={(e) =>
+                    setForm({ ...form, industry: e.target.value })
+                  }
+                  className="h-10 w-full border rounded-md px-3"
+                >
+                  <option value="">Select Industry</option>
+                  {INDUSTRIES.map((i) => (
+                    <option key={i} value={i}>
+                      {i}
+                    </option>
+                  ))}
+                </select>
               </Field>
             </div>
           </div>
@@ -168,11 +178,22 @@ export function CompanyEditDialog({
               </Field>
 
               <Field label="Location">
-                <Input
-                  id="location"
-                  value={form.location ?? ""}
-                  onChange={handleChange}
-                />
+                <Field label="Location">
+                  <select
+                    value={form.location ?? ""}
+                    onChange={(e) =>
+                      setForm({ ...form, location: e.target.value })
+                    }
+                    className="h-10 w-full border rounded-md px-3"
+                  >
+                    <option value="">Select Location</option>
+                    {LOCATIONS.map((l) => (
+                      <option key={l} value={l}>
+                        {l}
+                      </option>
+                    ))}
+                  </select>
+                </Field>
               </Field>
 
               <Field label="Website">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 // UI Components
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
@@ -23,22 +23,12 @@ import {
 } from "@/components/ui/table";
 import { StatusBadge } from "@/components/ui-custom/status-badge";
 
-import {
-  Plus,
-  Search,
-  Filter,
-  MoreHorizontal,
-  Eye,
-  Edit,
-  Ban,
-  Users,
-} from "lucide-react";
+import { Plus, Search, MoreHorizontal, Eye, Edit, Ban } from "lucide-react";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -58,6 +48,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/lib/supabase";
 import { CompanyViewDialog } from "@/components/companies/company-view-dialog";
 import { CompanyEditDialog } from "@/components/companies/company-edit-dialog";
+import { Select } from "@radix-ui/react-select";
 
 // -----------------------------
 // Types
@@ -77,13 +68,36 @@ type Company = {
 };
 
 // -----------------------------
+// Helpers
+// -----------------------------
+
+function getSizeCategory(size: number | null) {
+  if (!size) return "small";
+  if (size <= 50) return "small";
+  if (size <= 250) return "medium";
+  return "large";
+}
+
+// -----------------------------
 // Page
 // -----------------------------
 
 export default function CompaniesPage() {
   const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // search + filters
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
+  const [industryFilter, setIndustryFilter] = useState("all");
+  const [locationFilter, setLocationFilter] = useState("all");
+  const [sizeFilter, setSizeFilter] = useState<
+    "all" | "small" | "medium" | "large"
+  >("all");
+
+  // dialogs
   const [viewOpen, setViewOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
@@ -144,6 +158,26 @@ export default function CompaniesPage() {
   }, []);
 
   // -----------------------------
+  // Derived filter options
+  // -----------------------------
+
+  const industries = useMemo(
+    () =>
+      Array.from(
+        new Set(companies.map((c) => c.industry).filter(Boolean)),
+      ) as string[],
+    [companies],
+  );
+
+  const locations = useMemo(
+    () =>
+      Array.from(
+        new Set(companies.map((c) => c.location).filter(Boolean)),
+      ) as string[],
+    [companies],
+  );
+
+  // -----------------------------
   // Form handlers
   // -----------------------------
 
@@ -198,9 +232,31 @@ export default function CompaniesPage() {
   // Filtered list
   // -----------------------------
 
-  const filtered = companies.filter((c) =>
-    c.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filtered = companies.filter((c) => {
+    const matchesSearch = c.name.toLowerCase().includes(search.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && c.is_active) ||
+      (statusFilter === "inactive" && !c.is_active);
+
+    const matchesIndustry =
+      industryFilter === "all" || c.industry === industryFilter;
+
+    const matchesLocation =
+      locationFilter === "all" || c.location === locationFilter;
+
+    const matchesSize =
+      sizeFilter === "all" || getSizeCategory(c.company_size) === sizeFilter;
+
+    return (
+      matchesSearch &&
+      matchesStatus &&
+      matchesIndustry &&
+      matchesLocation &&
+      matchesSize
+    );
+  });
 
   // -----------------------------
   // UI
@@ -246,11 +302,21 @@ export default function CompaniesPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="industry">Industry</Label>
-                  <Input
+                  <select
                     id="industry"
                     value={form.industry}
-                    onChange={handleChange}
-                  />
+                    onChange={(e) =>
+                      setForm({ ...form, industry: e.target.value })
+                    }
+                    className="h-10 w-full border rounded-md px-3"
+                  >
+                    <option value="">Select Industry</option>
+                    {INDUSTRIES.map((ind) => (
+                      <option key={ind} value={ind}>
+                        {ind}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
@@ -273,11 +339,21 @@ export default function CompaniesPage() {
 
                 <div className="space-y-2">
                   <Label htmlFor="location">Location</Label>
-                  <Input
+                  <select
                     id="location"
                     value={form.location}
-                    onChange={handleChange}
-                  />
+                    onChange={(e) =>
+                      setForm({ ...form, location: e.target.value })
+                    }
+                    className="h-10 w-full border rounded-md px-3"
+                  >
+                    <option value="">Select Location</option>
+                    {LOCATIONS.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">
@@ -313,11 +389,12 @@ export default function CompaniesPage() {
 
         <Card className="border-border/60 shadow-sm mt-6">
           <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base font-medium">
-                All Companies
-              </CardTitle>
+            <CardTitle className="text-base font-medium">
+              All Companies
+            </CardTitle>
 
+            {/* Filters */}
+            <div className="flex flex-wrap gap-2 mt-4">
               <div className="relative w-64">
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -327,6 +404,66 @@ export default function CompaniesPage() {
                   onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
+
+              <select
+                className="h-9 border rounded-md px-2"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+
+              <select
+                className="h-9 border rounded-md px-2"
+                value={industryFilter}
+                onChange={(e) => setIndustryFilter(e.target.value)}
+              >
+                <option value="all">All Industries</option>
+                {industries.map((i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="h-9 border rounded-md px-2"
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+              >
+                <option value="all">All Locations</option>
+                {locations.map((l) => (
+                  <option key={l} value={l}>
+                    {l}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                className="h-9 border rounded-md px-2"
+                value={sizeFilter}
+                onChange={(e) => setSizeFilter(e.target.value as any)}
+              >
+                <option value="all">All Sizes</option>
+                <option value="small">Small (≤50)</option>
+                <option value="medium">Medium (≤250)</option>
+                <option value="large">Large (250+)</option>
+              </select>
+
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSearch("");
+                  setStatusFilter("all");
+                  setIndustryFilter("all");
+                  setLocationFilter("all");
+                  setSizeFilter("all");
+                }}
+              >
+                Clear
+              </Button>
             </div>
           </CardHeader>
 
@@ -429,3 +566,35 @@ export default function CompaniesPage() {
     </div>
   );
 }
+
+export const INDUSTRIES = [
+  "Information Technology",
+  "Finance",
+  "Healthcare",
+  "Education",
+  "Manufacturing",
+  "Retail",
+  "Real Estate",
+  "Logistics",
+  "Telecommunications",
+  "Energy",
+  "Media & Entertainment",
+  "Construction",
+  "Government",
+  "Hospitality",
+];
+
+export const LOCATIONS = [
+  "New York",
+  "London",
+  "Berlin",
+  "Dubai",
+  "Singapore",
+  "Bangalore",
+  "Hyderabad",
+  "Chennai",
+  "Mumbai",
+  "Delhi",
+  "Tokyo",
+  "Sydney",
+];

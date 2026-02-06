@@ -522,7 +522,11 @@ export default function DashboardPage() {
 
   // Optional: what to show if NOT logged in
   if (!role) {
-    return <div className="p-6 text-gray-500">Not authenticated</div>;
+    return (
+      <div className="p-6 text-gray-500 flex items-center justify-center h-screen">
+        Not authenticated
+      </div>
+    );
   }
 
   return (

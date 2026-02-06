@@ -46,15 +46,22 @@ export function Sidebar() {
   const { role, logout } = useAuth();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  const navItems = role === "god" ? GOD_NAV : role === "manager" ? MANAGER_NAV : EMPLOYEE_NAV;
+  const navItems =
+    role === "god" ? GOD_NAV : role === "manager" ? MANAGER_NAV : EMPLOYEE_NAV;
 
   const NavContent = () => (
     <div className="flex flex-col h-full bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
       <div className="p-6 flex items-center gap-3">
         <div className="h-10 w-10 bg-primary/10 rounded-xl flex items-center justify-center">
-          <img src="/logo.png" alt="OrgPilot" className="h-6 w-6 object-contain" />
+          <img
+            src="/logo.png"
+            alt="OrgPilot"
+            className="h-6 w-6 object-contain"
+          />
         </div>
-        <span className="font-heading font-bold text-xl tracking-tight">OrgPilot</span>
+        <span className="font-heading font-bold text-xl tracking-tight">
+          OrgPilot
+        </span>
       </div>
 
       <div className="flex-1 py-6 px-4 space-y-1">
@@ -68,11 +75,18 @@ export function Sidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
                 isActive
                   ? "bg-sidebar-primary text-sidebar-primary-foreground shadow-sm"
-                  : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-muted-foreground"
+                  : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-muted-foreground",
               )}
               onClick={() => setIsMobileOpen(false)}
             >
-              <item.icon className={cn("h-4 w-4", isActive ? "text-current" : "text-muted-foreground group-hover:text-current")} />
+              <item.icon
+                className={cn(
+                  "h-4 w-4",
+                  isActive
+                    ? "text-current"
+                    : "text-muted-foreground group-hover:text-current",
+                )}
+              />
               {item.title}
             </Link>
           );
@@ -80,7 +94,11 @@ export function Sidebar() {
       </div>
 
       <div className="p-4 border-t border-sidebar-border">
-        <Button variant="ghost" className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={logout}>
+        <Button
+          variant="ghost"
+          className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+          onClick={logout}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Logout
         </Button>
